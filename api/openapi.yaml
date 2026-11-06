@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  title: API Analítica PI4 - UNIVESP
+  description: >
+    Indicadores de manutenção do PI4. Autenticação por token opaco no cabeçalho
+    Authorization: Bearer. O token fica em API_TOKEN, fora do código.
+    MTBF = tempo de funcionamento / falhas corretivas.
+    MTTR = tempo de reparo das corretivas fechadas / reparos.
+    Disponibilidade = MTBF / (MTBF + MTTR).
+  version: 1.1.0
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: token
+paths:
+  /api/indicadores/mtbf.php:
+    get:
+      summary: Retorna o MTBF (Mean Time Between Failures)
+      parameters:
+        - name: maq
+          in: query
+          schema:
+            type: string
+        - name: inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: setor
+          in: query
+          description: Linha ou setor (OS_LINHA)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                  error:
+                    type: string
+                    nullable: true
+        '405':
+          description: Método não permitido
+  /api/indicadores/mttr.php:
+    get:
+      summary: Retorna o MTTR (Mean Time To Repair)
+      parameters:
+        - name: maq
+          in: query
+          schema:
+            type: string
+        - name: inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: setor
+          in: query
+          description: Linha ou setor (OS_LINHA)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
+  /api/indicadores/disponibilidade.php:
+    get:
+      summary: Retorna a Disponibilidade (%)
+      parameters:
+        - name: maq
+          in: query
+          schema:
+            type: string
+        - name: inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: setor
+          in: query
+          description: Linha ou setor (OS_LINHA)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
+  /api/indicadores/ranking.php:
+    get:
+      summary: Retorna o Ranking de Criticidade
+      parameters:
+        - name: limite
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: setor
+          in: query
+          description: Linha ou setor (OS_LINHA)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sucesso
+  /api/maquinas.php:
+    get:
+      summary: Lista de Máquinas
+      responses:
+        '200':
+          description: Sucesso
